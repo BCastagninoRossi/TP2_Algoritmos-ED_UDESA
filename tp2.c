@@ -23,23 +23,60 @@ struct list_iter {
 };
 
 list_t *list_new(){
-    return NULL;
+    list_t* new_list = malloc(sizeof(list_t));
+    if(new_list){
+        new_list->head = NULL;
+        new_list->tail = NULL;
+        new_list->size = 0;
+    }
+    return new_list;
 }
 
 size_t list_length(const list_t *list){
+    if(list){
+        size_t len = list->size;
+        return len;
+    }
     return 0;
 }
 
 bool list_is_empty(const list_t *list){
-    return true;
+    if(!list){
+        return false;
+    }
+    if(list->size==0){
+        return true;
+    }
+    return false;
 }
 
 bool list_insert_head(list_t *list, void *value){
-    return false;
+    if(!list){
+        return false;
+    }
+    node_t* new_head = malloc(sizeof(node_t));
+    if (!new_head){
+        return false;
+    }
+    list->head = new_head;
+    list->head->value = value;
+
+    return true;
 }
 
 bool list_insert_tail(list_t *list, void *value){
-    return false;
+    if (!list){
+        return false;
+    }
+    node_t* new_tail = malloc(sizeof(node_t));
+    if(!new_tail){
+        return false;
+    }
+    list->tail = new_tail;
+    list->tail->value = value;
+    list->tail->next = NULL; // ESTO ESTÁ MAL, CLARAMENTE EL PREV DEL TAIL TIENE QUE SER EL ANTEÚLTIMO ELEMENTO DE LA LISTA
+    list->tail->prev = NULL;
+    return true;;
 }
 
 void *list_peek_head(const list_t *list){
