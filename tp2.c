@@ -58,8 +58,21 @@ bool list_insert_head(list_t *list, void *value){
     if (!new_head){
         return false;
     }
+    node_t* temp = NULL;
+
+    if(!list_is_empty(list)){
+        temp = list->head;
+    }
+
     list->head = new_head;
     list->head->value = value;
+    list->head->next = temp;
+    list->head->prev = NULL;
+    list->size ++;
+
+    if(list->size == 1){
+        list->tail = list->head;
+    }
 
     return true;
 }
@@ -72,27 +85,58 @@ bool list_insert_tail(list_t *list, void *value){
     if(!new_tail){
         return false;
     }
+    node_t* temp = NULL;
+
+    if(!list_is_empty(list)){
+        temp = list->tail;
+    }
+
     list->tail = new_tail;
     list->tail->value = value;
-    list->tail->next = NULL; // ESTO ESTÁ MAL, CLARAMENTE EL PREV DEL TAIL TIENE QUE SER EL ANTEÚLTIMO ELEMENTO DE LA LISTA
-    list->tail->prev = NULL;
-    return true;;
+    list->tail->next = NULL;
+    list->tail->prev = temp;
+    list->size ++;
+    if(list->size == 1){
+        list->head = list->tail;
+    }
+    return true;
 }
 
+
 void *list_peek_head(const list_t *list){
-    return NULL;
+    if(!list || list_is_empty(list)){
+        return NULL;
+    }
+    return list->head->value;
 }
 
 void *list_peek_tail(const list_t *list){
-    return NULL;
+    if(!list || list_is_empty(list)){
+        return NULL;
+    }
+    return list->tail->value;
 }
 
 void *list_pop_head(list_t *list){
-    return NULL;
+    if(!list || list->size == 0){
+        return NULL;
+    }
+    void* data = list->head->value;
+    list->head = list->head->next;
+    list->head->prev = NULL;
+    list->size --;
+    return data;
 }
 
 void *list_pop_tail(list_t *list){
-    return NULL;
+    if(!list || list->size == 0){
+        return NULL;
+    }
+    void* data = list->tail->value;
+    list->tail = list->tail->prev;
+    list->tail->next = NULL;
+    list->size --;
+    return data;
 }
 
 void list_destroy(list_t *list, void destroy_value(void *)){
