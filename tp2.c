@@ -51,7 +51,7 @@ bool list_is_empty(const list_t *list){
 }
 
 bool list_insert_head(list_t *list, void *value){
-    if(!list){
+    if(list == NULL){
         return false;
     }
     node_t* new_head = malloc(sizeof(node_t));
@@ -122,9 +122,14 @@ void *list_pop_head(list_t *list){
         return NULL;
     }
     void* data = list->head->value;
-    list->head = list->head->next;
-    list->head->prev = NULL;
-    list->size --;
+    if(list->size == 1){
+        list->head = NULL;
+        list->tail = NULL;
+    }else{
+        list->head = list->head->next;
+        list->head->prev = NULL;
+    }
+    list->size--;
     return data;
 }
 
@@ -133,32 +138,49 @@ void *list_pop_tail(list_t *list){
         return NULL;
     }
     void* data = list->tail->value;
-    list->tail = list->tail->prev;
-    list->tail->next = NULL;
-    list->size --;
+    if(list->size == 1){
+        list->head = NULL;
+        list->tail = NULL;
+    }else{
+        list->tail = list->tail->prev;
+        list->tail->next = NULL;
+    }
+    list->size--;
     return data;
 }
 
-void list_destroy(list_t *list, void destroy_value(void *)){
-    if(!list){
+void list_destroy(list_t *list, void destroy_value(void *)) {
+    if (!list) {
         return;
     }
-    if(!list_is_empty(list)){
-        int list_size = list->size;
-        list_iter_t* iterator = 
-        if(!iterator){
-            return false;
-        }
-        for (int i; i < list_size; i++){
-        }
-        }
-    free(list);
-    return;
+
+    if (list_is_empty(list)) {
+        free(list);
+        return;
     }
+
+    list_iter_t* iterator = list_iter_create_head(list);
+    while(iterator) {
+        node_t *temp = iterator->curr;
+        bool status = list_iter_forward(iterator);
+        if(destroy_value){
+            destroy_value(temp);
+        }
+        if (!status) {
+            break;
+        }
+    }
+    free(iterator);
+    list->head = NULL;
+    list->tail = NULL;
+    list->size = 0;
+    free(list);
+}
+
 
 
 list_iter_t *list_iter_create_head(list_t *list){
-    if(!list){
+    if(!list || list_is_empty(list)){
         return NULL;
     }
     list_iter_t* new_iter = malloc(sizeof(list_iter_t));
@@ -171,7 +193,7 @@ list_iter_t *list_iter_create_head(list_t *list){
 }
 
 list_iter_t *list_iter_create_tail(list_t *list){
-    if(!list){
+    if(!list|| list_is_empty(list)){
         return NULL;
     }
     list_iter_t* new_iter = malloc(sizeof(list_iter_t));

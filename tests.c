@@ -122,12 +122,12 @@ bool test_peek_tail() {
     bool tests_result = true;
     list_t* list = list_new();
     tests_result &= test_assert("La lista fue creada", list != NULL);
-    tests_result &= test_assert("EL valor de head es NULL con la lista vacia", !list_peek_tail(list));
+    tests_result &= test_assert("EL valor de tail es NULL con la lista vacia", !list_peek_tail(list));
     for(int i=0;i<10;i++){
         int* aux = malloc(sizeof(int));
         *aux = i;
         list_insert_tail(list, aux);
-        tests_result &= test_assert("El valor de head es correcto",
+        tests_result &= test_assert("El valor de tail es correcto",
                                     *((int*)list_peek_tail(list)) == i);
     }
     list_destroy(list, free);
