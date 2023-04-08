@@ -143,12 +143,19 @@ void list_destroy(list_t *list, void destroy_value(void *)){
     if(!list){
         return;
     }
-    int list_size = list->size;
-    for (int i; i < list_size; i++){
-
-    }
+    if(!list_is_empty(list)){
+        int list_size = list->size;
+        list_iter_t* iterator = 
+        if(!iterator){
+            return false;
+        }
+        for (int i; i < list_size; i++){
+        }
+        }
+    free(list);
     return;
-}
+    }
+
 
 list_iter_t *list_iter_create_head(list_t *list){
     if(!list){
@@ -264,9 +271,19 @@ bool list_iter_insert_before(list_iter_t *iter, void *value){
     }
     iter->curr->prev = new_node;
     iter->list->size ++;
-    return true
+    return true;
 }
 
 void *list_iter_delete(list_iter_t *iter){
+    if(!iter||!(iter->curr)||!(iter->list)||list_is_empty(iter->list)){
     return NULL;
+    }
+    void* value = iter->curr->value;
+    iter->curr->prev->next = iter->curr->next;
+    iter->curr->next->prev = iter->curr->prev;
+    if(iter->curr->next){
+        iter->curr = iter->curr->next;
+    }else{iter->curr = iter->curr->prev;}
+    iter->list->size --;
+    return value;
 }
