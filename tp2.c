@@ -341,12 +341,15 @@ void *list_iter_delete(list_iter_t *iter){
     if(list_iter_at_first(iter)){
         iter->list->head = iter->curr->next;
         iter->curr->next->prev = NULL;
+        iter->curr = iter->curr->next;
         iter->list->size --;
+
         return value;
     }
     if(list_iter_at_last(iter)){
         iter->list->tail = iter->curr->prev;
         iter->curr->prev->next = NULL;
+        iter->curr = iter->curr->prev;
         iter->list->size --;
         return value;
     }
