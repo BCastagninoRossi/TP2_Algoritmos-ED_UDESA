@@ -267,7 +267,7 @@ void list_iter_destroy(list_iter_t *iter){
 }
 
 bool list_iter_insert_after(list_iter_t *iter, void *value){
-    if(!iter||!(iter->curr)||!(iter->list)){
+    if(!iter||!(iter->list)){
     return false;
     }
     node_t* new_node = malloc(sizeof(node_t));
@@ -275,6 +275,15 @@ bool list_iter_insert_after(list_iter_t *iter, void *value){
         return false;
     }
     new_node->value = value;
+    if(iter->list->size == 0){
+        new_node->next = NULL;
+        new_node->prev = NULL;
+        iter->list->head = new_node;
+        iter->list->tail = new_node;
+        iter->curr = new_node;
+        iter->list->size ++;
+        return true;
+    }
     new_node->next = iter->curr->next;
     new_node->prev = iter->curr;
     if(iter->curr->next){
@@ -295,8 +304,16 @@ bool list_iter_insert_before(list_iter_t *iter, void *value){
     if (!new_node){
         return false;
     }
-    return false;
     new_node->value = value;
+        if(iter->list->size == 0){
+        new_node->next = NULL;
+        new_node->prev = NULL;
+        iter->list->head = new_node;
+        iter->list->tail = new_node;
+        iter->curr = new_node;
+        iter->list->size ++;
+        return true;
+    }
     new_node->next = iter->curr;
     new_node->prev = iter->curr->prev;
     if(iter->curr->prev){
@@ -313,7 +330,26 @@ void *list_iter_delete(list_iter_t *iter){
     if(!iter||!(iter->curr)||!(iter->list)||list_is_empty(iter->list)){
     return NULL;
     }
+    //FALTA LIBERAR LA MEMORIA DE TODO ESTO
     void* value = iter->curr->value;
+    if(iter->list->size == 1){
+        iter->list->head = NULL;
+        iter->list->tail = NULL;
+        iter->list->size --;
+        return value;
+    }
+    if(list_iter_at_first(iter)){
+        iter->list->head = iter->curr->next;
+        iter->curr->next->prev = NULL;
+        iter->list->size --;
+        return value;
+    }
+    if(list_iter_at_last(iter)){
+        iter->list->tail = iter->curr->prev;
+        iter->curr->prev->next = NULL;
+        iter->list->size --;
+        return value;
+    }
     iter->curr->prev->next = iter->curr->next;
     iter->curr->next->prev = iter->curr->prev;
     if(iter->curr->next){
