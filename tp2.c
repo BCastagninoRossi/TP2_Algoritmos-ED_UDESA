@@ -189,7 +189,7 @@ void list_destroy(list_t *list, void destroy_value(void *)) {
 
 
 list_iter_t *list_iter_create_head(list_t *list){
-    if(!list || list_is_empty(list)){
+    if(!list){
         return NULL;
     }
     list_iter_t* new_iter = malloc(sizeof(list_iter_t));
@@ -202,7 +202,7 @@ list_iter_t *list_iter_create_head(list_t *list){
 }
 
 list_iter_t *list_iter_create_tail(list_t *list){
-    if(!list|| list_is_empty(list)){
+    if(!list){
         return NULL;
     }
     list_iter_t* new_iter = malloc(sizeof(list_iter_t));
@@ -215,7 +215,7 @@ list_iter_t *list_iter_create_tail(list_t *list){
 }
 
 bool list_iter_forward(list_iter_t *iter){
-    if(!iter || (iter->curr->next) == NULL){
+    if(!iter || !(iter->curr) || !(iter->curr->next)){
         return false;
     }
     iter->curr = iter->curr->next;
@@ -223,7 +223,7 @@ bool list_iter_forward(list_iter_t *iter){
 }
 
 bool list_iter_backward(list_iter_t *iter){
-    if(!iter || (iter->curr->prev) == NULL){
+    if(!iter || !(iter->curr) || !(iter->curr->prev)){
         return false;
     }
     iter->curr = iter->curr->prev;
@@ -279,6 +279,8 @@ bool list_iter_insert_after(list_iter_t *iter, void *value){
     new_node->prev = iter->curr;
     if(iter->curr->next){
         iter->curr->next->prev = new_node;
+        }else{
+            iter->list->tail = new_node;
         }
     iter->curr->next = new_node;
     iter->list->size++;
@@ -299,6 +301,8 @@ bool list_iter_insert_before(list_iter_t *iter, void *value){
     new_node->prev = iter->curr->prev;
     if(iter->curr->prev){
         iter->curr->prev->next = new_node;
+    }else{
+        iter->list->head = new_node;
     }
     iter->curr->prev = new_node;
     iter->list->size ++;

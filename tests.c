@@ -127,7 +127,7 @@ bool test_peek_tail() {
         int* aux = malloc(sizeof(int));
         *aux = i;
         list_insert_tail(list, aux);
-        tests_result &= test_assert("El valor de tail es correcto",
+        tests_result &= test_assert("El valor de head es correcto",
                                     *((int*)list_peek_tail(list)) == i);
     }
     list_destroy(list, free);
