@@ -272,29 +272,25 @@ bool list_iter_insert_after(list_iter_t *iter, void *value){
     if(!iter||!(iter->list)){
     return false;
     }
+    if(list_length(iter->list) == 0 || list_iter_at_last(iter)){
+        if(list_insert_tail(iter->list, value)){
+            if(list_length(iter->list) == 1){
+                iter->curr = iter->list->tail;
+            }
+        }else{
+            return false;
+        }
+        return true;
+    }
 
     node_t* new_node = malloc(sizeof(node_t));
     if (!new_node){
         return false;
     }
-
     new_node->value = value;
-    if(list_length(iter->list) == 0){
-        new_node->next = NULL;
-        new_node->prev = NULL;
-        iter->list->head = new_node;
-        iter->list->tail = new_node;
-        iter->curr = new_node;
-        iter->list->size ++;
-        return true;
-    }
     new_node->next = iter->curr->next;
     new_node->prev = iter->curr;
-    if(iter->curr->next){
-        iter->curr->next->prev = new_node;
-        }else{
-            iter->list->tail = new_node;
-        }
+    iter->curr->next->prev = new_node;
     iter->curr->next = new_node;
     iter->list->size++;
     return true;
@@ -304,27 +300,24 @@ bool list_iter_insert_before(list_iter_t *iter, void *value){
     if(!iter||!(iter->curr)||!(iter->list)){
     return false;
     }
+    if(list_length(iter->list) == 0 || list_iter_at_first(iter)){
+        if(list_insert_head(iter->list, value)){
+            if(list_length(iter->list) == 1){
+                iter->curr = iter->list->head;
+            }
+        }else{
+            return false;
+        }
+        return true;
+    }
     node_t* new_node = malloc(sizeof(node_t));
     if (!new_node){
         return false;
     }
     new_node->value = value;
-        if(list_length(iter->list) == 0){
-        new_node->next = NULL;
-        new_node->prev = NULL;
-        iter->list->head = new_node;
-        iter->list->tail = new_node;
-        iter->curr = new_node;
-        iter->list->size ++;
-        return true;
-    }
     new_node->next = iter->curr;
     new_node->prev = iter->curr->prev;
-    if(iter->curr->prev){
-        iter->curr->prev->next = new_node;
-    }else{
-        iter->list->head = new_node;
-    }
+    iter->curr->prev->next = new_node;
     iter->curr->prev = new_node;
     iter->list->size ++;
     return true;
