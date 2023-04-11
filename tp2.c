@@ -265,7 +265,6 @@ void list_iter_destroy(list_iter_t *iter){
         iter->list = NULL;
         free(iter);
     }
-    return;
 }
 
 bool list_iter_insert_after(list_iter_t *iter, void *value){
@@ -332,37 +331,27 @@ void *list_iter_delete(list_iter_t *iter){
     if(list_length(iter->list) == 1){
         iter->list->head = NULL;
         iter->list->tail = NULL;
-        iter->list->size --;
-        free(tmp);
-        tmp = NULL;
-        return value;
-    }
-    if(list_iter_at_first(iter)){
+
+    } else if(list_iter_at_first(iter)){
         iter->list->head = iter->curr->next;
         iter->curr->next->prev = NULL;
         iter->curr = iter->curr->next;
-        iter->list->size --;
-        free(tmp);
-        tmp = NULL;
-        return value;
-    }
-    if(list_iter_at_last(iter)){
+
+    } else if(list_iter_at_last(iter)){
         iter->list->tail = iter->curr->prev;
         iter->curr->prev->next = NULL;
         iter->curr = iter->curr->prev;
-        iter->list->size --;
-        free(tmp);
-        tmp = NULL;
-        return value;
+
+    }else{
+        iter->curr->prev->next = iter->curr->next;
+        iter->curr->next->prev = iter->curr->prev;
+        if(iter->curr->next){
+            iter->curr = iter->curr->next;
+        }else{iter->curr = iter->curr->prev;}
     }
-    iter->curr->prev->next = iter->curr->next;
-    iter->curr->next->prev = iter->curr->prev;
-    if(iter->curr->next){
-        iter->curr = iter->curr->next;
-    }else{iter->curr = iter->curr->prev;}
+
     iter->list->size --;
     free(tmp);
     tmp = NULL;
-    
     return value;
 }
